@@ -16,24 +16,9 @@ class TagList(ListView):
     model = Tag
 
 
-class VendorList(ListView):
-    template_name = 'shop/vendors/index.html'
-    model = Vendor
-
-
-class ManagerList(ListView):
-    template_name = 'shop/managers/index.html'
-    model = Manager
-
-
 class OutletDetail(DetailView):
     template_name = 'shop/outlets/show.html'
     model = Outlet
-
-
-class VendorDetail(DetailView):
-    template_name = 'shop/vendors/show.html'
-    model = Vendor
 
 
 def home(request):
@@ -104,74 +89,6 @@ def delete_tag(request, pk):
         return redirect('index_tags')
     context = {'tag': tag}
     return render(request, 'shop/tags/destroy.html', context)
-
-
-# Vendor views
-def create_vendor(request):
-    form = VendorForm()
-    if request.method == 'POST':
-        form = VendorForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('index_vendors')
-    context = {'form': form}
-    return render(request, 'shop/vendors/new.html', context)
-
-
-def update_vendor(request, pk):
-    vendor = get_object_or_404(Vendor, pk=pk)
-    form = VendorForm(instance=vendor)
-    if request.method == 'POST':
-        form = VendorForm(request.POST, instance=vendor)
-        if form.is_valid():
-            form.save()
-            return redirect('show_vendor', pk=pk)
-    context = {'form': form}
-    return render(request, 'shop/vendors/new.html', context)
-
-
-def delete_vendor(request, pk):
-    vendor = get_object_or_404(Vendor, pk=pk)
-    if request.method == 'POST':
-        vendor.delete()
-        return redirect('index_vendors')
-    context = {'vendor': vendor}
-    return render(request, 'shop/vendors/destroy.html', context)
-
-
-# Manager Views
-def create_manager(request, pk):
-    outlet = get_object_or_404(Outlet, pk=pk)
-    form = ManagerForm(initial={'outlet': outlet})
-    if request.method == 'POST':
-        form = ManagerForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('show_outlet', pk=outlet.id)
-    context = {'form': form}
-    return render(request, 'shop/managers/new.html', context)
-
-
-def update_manager(request, pk):
-    manager = get_object_or_404(Manager, pk=pk)
-    outlet = get_object_or_404(Outlet, pk=manager.outlet.id)
-    form = ManagerForm(instance=manager, initial={'outlet': outlet})
-    if request.method == 'POST':
-        form = ManagerForm(request.POST, instance=manager, initial={'outlet': outlet})
-        if form.is_valid():
-            form.save()
-            return redirect('show_outlet', pk=manager.outlet.id)
-    context = {'form': form}
-    return render(request, 'shop/managers/new.html', context)
-
-
-def delete_manager(request, pk):
-    manager = get_object_or_404(Manager, pk=pk)
-    if request.method == 'POST':
-        manager.delete()
-        return redirect('index_managers')
-    context = {'manager': manager}
-    return render(request, 'shop/managers/destroy.html', context)
 
 
 # auth views

@@ -4,22 +4,13 @@ from django.core.validators import MaxValueValidator, EmailValidator, MinValueVa
 
 # Create your models here.
 class Outlet(models.Model):
+    name = models.CharField(max_length=200, null=True)
     address = models.CharField(max_length=200)
     email = models.CharField(max_length=50)
     phone = models.CharField(max_length=15)
 
     def __str__(self):
         return self.address
-
-
-class Vendor(models.Model):
-    email = models.CharField(max_length=50)
-    name = models.CharField(max_length=50)
-    description = models.TextField(max_length=400)
-    country = models.CharField(max_length=20)
-
-    def __str__(self):
-        return self.name
 
 
 class Tag(models.Model):
@@ -36,21 +27,26 @@ class Product(models.Model):
     manufacture_date = models.DateField()
     expiry_date = models.DateField(blank=True, null=True)
     outlet = models.ForeignKey(Outlet, null=True, on_delete=models.SET_NULL)
-    vendor = models.ForeignKey(Vendor, null=True, on_delete=models.SET_NULL)
     tags = models.ManyToManyField(Tag)
 
     def __str__(self):
         return self.name
 
 
-class Manager(models.Model):
-    name = models.CharField(max_length=50)
-    email = models.CharField(max_length=50, null=True, validators=[EmailValidator()])
-    phone = models.CharField(max_length=15)
-    outlet = models.ForeignKey(Outlet, null=True, on_delete=models.SET_NULL)
+class Customer(models.Model):
+    name = models.CharField(max_length=200, null=True)
+    phone = models.CharField(max_length=200)
+    email = models.CharField(max_length=200, null=True)
 
     def __str__(self):
         return self.name
 
 
+class Order(models.Model):
+    customer = models.ForeignKey(Customer, null=True, on_delete=models.SET_NULL)
+    product = models.ForeignKey(Product, null=True, on_delete=models.SET_NULL)
+    date_created = models.DateTimeField(auto_now_add=True)
+    note = models.TextField(max_length=1000, null=True)
 
+    def __str__(self):
+        return self.product.name

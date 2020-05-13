@@ -8,6 +8,7 @@
         <table class="table table-borderless">
           <thead>
             <tr>
+              <th scope="col">Name</th>
               <th scope="col">Address</th>
               <th scope="col">Phone</th>
               <th scope="col">Email</th>
@@ -29,14 +30,6 @@
     <div class="col-1">
         <a class="btn btn-secondary" href="{% url 'index_outlets' %}" role="button">Back</a>
     </div>
-    <div class="col-1">
-        <a class="btn btn-warning" href="{% url 'create_manager' pk=object.id %}" role="button">Add manager+</a>
-    </div>
   </div>
-    {% include 'shop/outlets/index_managers.html' %}
-
-    {% block managers_content %}
-
-    {% endblock %}
 </div>
 {% endblock %}

@@ -8,5 +8,4 @@ urlpatterns = [
     path('<int:pk>/delete_outlet', views.delete_outlet, name='delete_outlet'),
     path('', OutletList.as_view(), name='index_outlets'),
     path('<int:pk>', OutletDetail.as_view(), name='show_outlet'),
-    path('<int:pk>/create_manager/', views.create_manager, name='create_manager')
 ]
