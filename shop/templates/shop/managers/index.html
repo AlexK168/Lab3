@@ -1,0 +1,26 @@
+{% extends 'shop/main.html' %}
+
+{% block content %}
+
+<table class="table table-borderless">
+  <thead>
+    <tr>
+      <th scope="col">Name</th>
+      <th scope="col">Email</th>
+      <th scope="col">Phone</th>
+      <th scope="col">Outlet</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for object in object_list %}
+        <tr>
+            {% include 'shop/managers/_manager.html' %}
+
+            <td><a class="btn btn-primary" href="{% url 'update_manager' object.id%}" role="button">Update</a></td>
+            <td><a class="btn btn-danger" href="{% url 'delete_manager' object.id%}" role="button">Delete</a></td>
+        </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}

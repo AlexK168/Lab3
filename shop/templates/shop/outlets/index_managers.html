@@ -1,0 +1,23 @@
+<h1>MANAGERS:</h1>
+<table class="table table-borderless">
+  <thead>
+    <tr>
+      <th scope="col">Name</th>
+      <th scope="col">Email</th>
+      <th scope="col">Phone</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for manager in object.manager_set.all %}
+        <tr>
+            <td>{{ manager.name }}</td>
+            <td>{{ manager.email}}</td>
+            <td>{{ manager.phone }}</td>
+
+            <td><a class="btn btn-primary" href="{% url 'update_manager' object.id%}" role="button">Update</a></td>
+            <td><a class="btn btn-danger" href="{% url 'delete_manager' object.id%}" role="button">Delete</a></td>
+
+        </tr>
+    {% endfor %}
+  </tbody>
+</table>

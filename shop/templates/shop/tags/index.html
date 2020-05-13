@@ -1,0 +1,35 @@
+{% extends 'shop/main.html' %}
+
+{% block content %}
+
+<table class="table table-borderless">
+  <thead>
+    <tr>
+      <th scope="col">Tags:</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for object in object_list %}
+        <tr>
+            <td>
+              <div class="row">
+                <div class="col-2">
+                  {{ object.name}}
+                </div>
+                <div class="col-1">
+                    <div class="btn-group" role="group" aria-label="Basic example">
+                        <a class="btn btn-primary" href="{% url 'update_tag' object.id %}" role="button">Update</a>
+                        <a class="btn btn-danger" href="{% url 'delete_tag' object.id %}"role="button">Delete</a>
+                    </div>
+                </div>
+              </div>
+            </td>
+        </tr>
+    {% endfor %}
+    <tr>
+        <td><a class="btn btn-danger" href="{% url 'create_tag' %}" role="button">Add+</a></td>
+    </tr>
+  </tbody>
+</table>
+
+{% endblock %}

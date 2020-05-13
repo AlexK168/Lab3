@@ -1,0 +1,26 @@
+{% extends 'shop/main.html' %}
+
+{% block content %}
+
+<table class="table table-borderless">
+  <thead>
+    <tr>
+      <th scope="col">Address</th>
+      <th scope="col">Phone</th>
+      <th scope="col">Email</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for object in object_list %}
+        <tr>
+            {% include 'shop/outlets/_outlet.html' %}
+            <td><a class="btn btn-primary" href="{% url 'show_outlet' object.id%}" role="button">Details</a></td>
+        </tr>
+    {% endfor %}
+    <tr>
+        <td><a class="btn btn-danger" href="{% url 'create_outlet' %}" role="button">Add+</a></td>
+    </tr>
+  </tbody>
+</table>
+
+{% endblock %}

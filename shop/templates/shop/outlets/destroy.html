@@ -1,0 +1,22 @@
+{% extends 'shop/main.html' %}
+
+{% block content %}
+<br>
+<div class="container">
+  <div class="row">
+    <div class="col-md-5">
+        <div class="card-header">
+            <h3>Are you sure?</h3>
+        </div>
+        <div class="card card-body">
+                {% comment %}<p>R U Sure???</p>{% endcomment %}
+                <form action="{% url 'delete_outlet' outlet.id %}" method="post">
+                <a class="btn btn-secondary" href="{% url 'show_outlet' outlet.id%}">Not really</a>
+                {% csrf_token %}
+                <input type="submit" class="btn btn-danger">
+                </form>
+        </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
