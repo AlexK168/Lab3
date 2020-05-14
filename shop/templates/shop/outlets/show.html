@@ -31,8 +31,15 @@
         <a class="btn btn-secondary" href="{% url 'index_outlets' %}" role="button">Back</a>
     </div>
   </div>
+    {% include 'shop/outlets/index_products.html' %}
+
+    {% block products_content %}
+
+    {% endblock %}
+
   <div class="row align-items-center">
       <a class="btn btn-warning" href="{% url 'create_product' object.id %}" role="button">Add product+</a>
   </div>
+
 </div>
 {% endblock %}

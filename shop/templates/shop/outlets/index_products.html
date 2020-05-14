@@ -1,0 +1,29 @@
+<h1>Products:</h1>
+<table class="table table-borderless">
+  <thead>
+      <tr>
+        <th scope="col">Name</th>
+        <th scope="col">Price</th>
+        <th scope="col">Manufacture date</th>
+        <th scope="col">Expiry date</th>
+        <th scope="col">Tags</th>
+        <th scope="col">Set_number</th>
+      </tr>
+  </thead>
+  <tbody>
+    {% for pr in object.product_set.all %}
+        <tr>
+            <td>{{ pr.name }}</td>
+            <td>{{ pr.price}}</td>
+            <td>{{ pr.manufacture_date }}</td>
+            <td>{{ pr.expiry_date }}</td>
+            <td>{{ pr.tags }}</td>
+            <td>{{ pr.set_number }}</td>
+
+            <td><a class="btn btn-primary" href="{% url 'update_product' pr.id%}" role="button">Update</a></td>
+            <td><a class="btn btn-danger" href="{% url 'delete_product' pr.id%}" role="button">Delete</a></td>
+
+        </tr>
+    {% endfor %}
+  </tbody>
+</table>

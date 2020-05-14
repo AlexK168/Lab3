@@ -3,9 +3,10 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import ListView, DetailView
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-
+from django.contrib.auth.models import Group
 from .forms import *
 from .models import *
+from .decorators import *
 
 
 class OutletList(ListView):
@@ -27,6 +28,11 @@ class OrderList(ListView):
     template_name = 'shop/orders/index.html'
     model = Order
 
+    def get_queryset(self):
+        if self.request.user.groups.exists():
+            group = self.request.user.groups.all()[0].name
+        return Order.objects.filter(customer=self.request.user.customer)
+
 
 class OutletDetail(DetailView):
     template_name = 'shop/outlets/show.html'
@@ -43,12 +49,13 @@ class OrderDetail(DetailView):
     model = Order
 
 
-@login_required(login_url='login')
 def home(request):
     return render(request, 'shop/home.html')
 
 
 # Outlet views
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['admins'])
 def create_outlet(request):
     form = OutletForm()
     if request.method == 'POST':
@@ -60,6 +67,8 @@ def create_outlet(request):
     return render(request, 'shop/outlets/new.html', context)
 
 
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['admins'])
 def update_outlet(request, pk):
     outlet = get_object_or_404(Outlet, pk=pk)
     form = OutletForm(instance=outlet)
@@ -72,6 +81,8 @@ def update_outlet(request, pk):
     return render(request, 'shop/outlets/new.html', context)
 
 
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['admins'])
 def delete_outlet(request, pk):
     outlet = get_object_or_404(Outlet, pk=pk)
     if request.method == 'POST':
@@ -82,6 +93,8 @@ def delete_outlet(request, pk):
 
 
 # Tag views
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['admins'])
 def create_tag(request):
     form = TagForm()
     if request.method == 'POST':
@@ -93,6 +106,8 @@ def create_tag(request):
     return render(request, 'shop/tags/new.html', context)
 
 
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['admins'])
 def update_tag(request, pk):
     tag = get_object_or_404(Tag, pk=pk)
     form = TagForm(instance=tag)
@@ -105,6 +120,8 @@ def update_tag(request, pk):
     return render(request, 'shop/tags/new.html', context)
 
 
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['admins'])
 def delete_tag(request, pk):
     tag = get_object_or_404(Tag, pk=pk)
     if request.method == 'POST':
@@ -115,6 +132,8 @@ def delete_tag(request, pk):
 
 
 # Products views
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['admins'])
 def create_product(request, pk):
     outlet = get_object_or_404(Outlet, pk=pk)
     form = ProductForm(initial={'outlet': outlet})
@@ -127,6 +146,8 @@ def create_product(request, pk):
     return render(request, 'shop/products/new.html', context)
 
 
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['admins'])
 def update_product(request, pk):
     product = get_object_or_404(Product, pk=pk)
     outlet = get_object_or_404(Outlet, pk=product.outlet.id)
@@ -140,6 +161,8 @@ def update_product(request, pk):
     return render(request, 'shop/products/new.html', context)
 
 
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['admins'])
 def delete_product(request, pk):
     product = get_object_or_404(Product, pk=pk)
     if request.method == 'POST':
@@ -150,6 +173,8 @@ def delete_product(request, pk):
 
 
 # order views
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['admins', 'customers'])
 def create_order(request, pk):
     customer = get_object_or_404(Customer, pk=pk)
     form = OrderForm(initial={'customer': customer})
@@ -162,6 +187,8 @@ def create_order(request, pk):
     return render(request, 'shop/orders/new.html', context)
 
 
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['admins', 'customers'])
 def update_order(request, pk):
     order = get_object_or_404(Order, pk=pk)
     customer = get_object_or_404(Customer, pk=order.customer.id)
@@ -175,6 +202,8 @@ def update_order(request, pk):
     return render(request, 'shop/orders/new.html', context)
 
 
+@login_required(login_url='login')
+@allowed_users(allowed_roles=['admins', 'customers'])
 def delete_order(request, pk):
     order = get_object_or_404(Order, pk=pk)
     if request.method == 'POST':
@@ -186,30 +215,39 @@ def delete_order(request, pk):
 
 # auth views
 def sign_in(request):
-    if request.method == 'POST':
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        user = authenticate(request, username=username, password=password)
-        if user is not None:
-            login(request, user)
-            return redirect('home')
-        else:
-            messages.info(request, 'Username or password is incorrect')
-    context = {}
-    return render(request, 'shop/login.html', context)
+    if request.user.is_authenticated:
+        return redirect('home')
+    else:
+        if request.method == 'POST':
+            username = request.POST.get('username')
+            password = request.POST.get('password')
+            user = authenticate(request, username=username, password=password)
+            if user is not None:
+                login(request, user)
+                return redirect('home')
+            else:
+                messages.info(request, 'Username or password is incorrect')
+        context = {}
+        return render(request, 'shop/login.html', context)
 
 
 def register(request):
-    form = CreateUserForm()
-    context = {'form': form}
-    if request.method == 'POST':
-        form = CreateUserForm(request.POST)
-        if form.is_valid():
-            form.save()
-            user = form.cleaned_data.get('username')
-            messages.success(request, 'Account was successfully created for ' + user)
-            return redirect('login')
-    return render(request, 'shop/register.html', context)
+    if request.user.is_authenticated:
+        return redirect('home')
+    else:
+        form = CreateUserForm()
+        context = {'form': form}
+        if request.method == 'POST':
+            form = CreateUserForm(request.POST)
+            if form.is_valid():
+                user = form.save()
+                group = Group.objects.get(name='customers')
+                user.groups.add(group)
+                username = form.cleaned_data.get('username')
+                Customer.objects.create(user=user, name=username)
+                messages.success(request, 'Account was successfully created for ' + username)
+                return redirect('login')
+        return render(request, 'shop/register.html', context)
 
 
 def sign_out(request):
