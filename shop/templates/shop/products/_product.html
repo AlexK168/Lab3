@@ -1,0 +1,12 @@
+<td>{{ object.name}}</td>
+<td>{{ object.price }}</td>
+<td>{{ object.manufacture_date }}</td>
+<td>{{ object.expiry_date }}</td>
+<td>{{ object.outlet}}</td>
+<td>
+    {% for t in object.tags.all %}
+       {{t}},
+    {% endfor %}
+</td>
+<td>{{ object.set_number }}</td>
+

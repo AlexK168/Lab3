@@ -1,0 +1,38 @@
+{% extends 'shop/main.html' %}
+
+{% block content %}
+
+<div class="container">
+  <div class="row align-items-center">
+    <div class="col-12">
+        <table class="table table-borderless">
+          <thead>
+            <tr>
+                <th scope="col">Name</th>
+                <th scope="col">Price</th>
+                <th scope="col">Manufacture date</th>
+                <th scope="col">Expiry date</th>
+                <th scope="col">Outlet</th>
+                <th scope="col">Tags</th>
+                <th scope="col">Set_number</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+                {% include 'shop/products/_product.html' %}
+            </tr>
+          </tbody>
+        </table>
+    </div>
+    <div class="col-1">
+        <a class="btn btn-primary" href="{% url 'update_product' object.id %}" role="button">Update</a>
+    </div>
+    <div class="col-1">
+        <a class="btn btn-danger" href="{% url 'delete_product' object.id %}"role="button">Delete</a>
+    </div>
+    <div class="col-1">
+        <a class="btn btn-secondary" href="{% url 'index_products' %}" role="button">Back</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

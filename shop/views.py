@@ -1,9 +1,11 @@
+from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import ListView, DetailView
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+
 from .forms import *
 from .models import *
-from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth import authenticate, login, logout
 
 
 class OutletList(ListView):
@@ -16,11 +18,22 @@ class TagList(ListView):
     model = Tag
 
 
+class ProductList(ListView):
+    template_name = 'shop/products/index.html'
+    model = Product
+
+
 class OutletDetail(DetailView):
     template_name = 'shop/outlets/show.html'
     model = Outlet
 
 
+class ProductDetail(DetailView):
+    template_name = 'shop/products/show.html'
+    model = Product
+
+
+@login_required(login_url='login')
 def home(request):
     return render(request, 'shop/home.html')
 
@@ -91,8 +104,43 @@ def delete_tag(request, pk):
     return render(request, 'shop/tags/destroy.html', context)
 
 
+# Products views
+def create_product(request, pk):
+    outlet = get_object_or_404(Outlet, pk=pk)
+    form = ProductForm(initial={'outlet': outlet})
+    if request.method == 'POST':
+        form = ProductForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('show_outlet', pk=outlet.id)
+    context = {'form': form}
+    return render(request, 'shop/products/new.html', context)
+
+
+def update_product(request, pk):
+    product = get_object_or_404(Product, pk=pk)
+    outlet = get_object_or_404(Outlet, pk=product.outlet.id)
+    form = ProductForm(instance=product, initial={'outlet': outlet})
+    if request.method == 'POST':
+        form = ProductForm(request.POST, instance=product, initial={'outlet': outlet})
+        if form.is_valid():
+            form.save()
+            return redirect('show_outlet', pk=product.outlet.id)  # temp - redirect to show
+    context = {'form': form}
+    return render(request, 'shop/products/new.html', context)
+
+
+def delete_product(request, pk):
+    product = get_object_or_404(Product, pk=pk)
+    if request.method == 'POST':
+        product.delete()
+        return redirect('index_products')
+    context = {'product': product}
+    return render(request, 'shop/products/destroy.html', context)
+
+
 # auth views
-def login(request):
+def sign_in(request):
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
@@ -100,16 +148,25 @@ def login(request):
         if user is not None:
             login(request, user)
             return redirect('home')
+        else:
+            messages.info(request, 'Username or password is incorrect')
     context = {}
     return render(request, 'shop/login.html', context)
 
 
 def register(request):
-    form = UserCreationForm
+    form = CreateUserForm()
     context = {'form': form}
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        form = CreateUserForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('home')
+            user = form.cleaned_data.get('username')
+            messages.success(request, 'Account was successfully created for ' + user)
+            return redirect('login')
     return render(request, 'shop/register.html', context)
+
+
+def sign_out(request):
+    logout(request)
+    return redirect('login')

@@ -1,0 +1,34 @@
+{% extends 'shop/main.html' %}
+
+{% block content %}
+
+<table class="table table-borderless">
+  <thead>
+    <tr>
+        <th scope="col">Name</th>
+        <th scope="col">Price</th>
+        <th scope="col">Outlet</th>
+        <th scope="col">Tags</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for object in object_list %}
+        <tr>
+            <td>{{ object.name}}</td>
+            <td>{{ object.price }}</td>
+            <td>{{ object.outlet}}</td>
+            <td>
+                {% for t in object.tags.all %}
+                   {{t}},
+                {% endfor %}
+            </td>
+            <td><a class="btn btn-primary" href="{% url 'show_product' object.id%}" role="button">Details</a></td>
+        </tr>
+    {% endfor %}
+{% comment %}    <tr>
+        <td><a class="btn btn-danger" href="{% url 'create_outlet' %}" role="button">Add+</a></td>
+    </tr>{% endcomment %}
+  </tbody>
+</table>
+
+{% endblock %}

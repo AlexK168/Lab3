@@ -1,5 +1,5 @@
 from django.db import models
-from django.core.validators import MaxValueValidator, EmailValidator, MinValueValidator, MinLengthValidator
+from django.core.validators import MinLengthValidator
 
 
 # Create your models here.
@@ -22,7 +22,7 @@ class Tag(models.Model):
 
 class Product(models.Model):
     set_number = models.CharField(max_length=10, validators=[MinLengthValidator(10)])
-    price = models.PositiveIntegerField(validators=[MinValueValidator])
+    price = models.PositiveIntegerField()
     name = models.CharField(max_length=100)
     manufacture_date = models.DateField()
     expiry_date = models.DateField(blank=True, null=True)
@@ -46,7 +46,7 @@ class Order(models.Model):
     customer = models.ForeignKey(Customer, null=True, on_delete=models.SET_NULL)
     product = models.ForeignKey(Product, null=True, on_delete=models.SET_NULL)
     date_created = models.DateTimeField(auto_now_add=True)
-    note = models.TextField(max_length=1000, null=True)
+    quantity = models.PositiveIntegerField(null=True)
 
     def __str__(self):
         return self.product.name
