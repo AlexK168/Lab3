@@ -23,6 +23,11 @@ class ProductList(ListView):
     model = Product
 
 
+class OrderList(ListView):
+    template_name = 'shop/orders/index.html'
+    model = Order
+
+
 class OutletDetail(DetailView):
     template_name = 'shop/outlets/show.html'
     model = Outlet
@@ -31,6 +36,11 @@ class OutletDetail(DetailView):
 class ProductDetail(DetailView):
     template_name = 'shop/products/show.html'
     model = Product
+
+
+class OrderDetail(DetailView):
+    template_name = 'shop/orders/show.html'
+    model = Order
 
 
 @login_required(login_url='login')
@@ -125,7 +135,7 @@ def update_product(request, pk):
         form = ProductForm(request.POST, instance=product, initial={'outlet': outlet})
         if form.is_valid():
             form.save()
-            return redirect('show_outlet', pk=product.outlet.id)  # temp - redirect to show
+            return redirect('show_outlet', pk=product.outlet.id)
     context = {'form': form}
     return render(request, 'shop/products/new.html', context)
 
@@ -137,6 +147,41 @@ def delete_product(request, pk):
         return redirect('index_products')
     context = {'product': product}
     return render(request, 'shop/products/destroy.html', context)
+
+
+# order views
+def create_order(request, pk):
+    customer = get_object_or_404(Customer, pk=pk)
+    form = OrderForm(initial={'customer': customer})
+    if request.method == 'POST':
+        form = OrderForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('index_orders')
+    context = {'form': form}
+    return render(request, 'shop/orders/new.html', context)
+
+
+def update_order(request, pk):
+    order = get_object_or_404(Order, pk=pk)
+    customer = get_object_or_404(Customer, pk=order.customer.id)
+    form = OrderForm(instance=order, initial={'customer': customer})
+    if request.method == 'POST':
+        form = OrderForm(request.POST, instance=order, initial={'customer': customer})
+        if form.is_valid():
+            form.save()
+            return redirect('index_orders')
+    context = {'form': form}
+    return render(request, 'shop/orders/new.html', context)
+
+
+def delete_order(request, pk):
+    order = get_object_or_404(Order, pk=pk)
+    if request.method == 'POST':
+        order.delete()
+        return redirect('index_orders')
+    context = {'order': order}
+    return render(request, 'shop/orders/destroy.html', context)
 
 
 # auth views

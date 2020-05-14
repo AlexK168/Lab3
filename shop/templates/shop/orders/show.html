@@ -1,10 +1,35 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends 'shop/main.html' %}
+
+{% block content %}
+
+<div class="container">
+  <div class="row align-items-center">
+    <div class="col-8">
+        <table class="table table-borderless">
+          <thead>
+            <tr>
+              <th scope="col">Product</th>
+              <th scope="col">Quantity</th>
+              <th scope="col">Customer</th>
+              <th scope="col">Date created</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+                {% include 'shop/orders/_order.html' %}
+            </tr>
+          </tbody>
+        </table>
+    </div>
+    <div class="col-1">
+        <a class="btn btn-primary" href="{% url 'update_order' object.id %}" role="button">Update</a>
+    </div>
+    <div class="col-1">
+        <a class="btn btn-danger" href="{% url 'delete_order' object.id %}"role="button">Delete</a>
+    </div>
+    <div class="col-1">
+        <a class="btn btn-secondary" href="{% url 'index_orders' %}" role="button">All orders</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,10 +1,21 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends 'shop/main.html' %}
+
+{% block content %}
+<br>
+<div class="container">
+  <div class="row">
+    <div class="col-md-5">
+        <div class="card-header">
+            <h3>Are you sure?</h3>
+        </div>
+        <div class="card card-body">
+                <form action="{% url 'delete_order' order.id %}" method="post">
+                <a class="btn btn-secondary" href="{% url 'show_order' order.id%}">Not really</a>
+                {% csrf_token %}
+                <input type="submit" class="btn btn-danger">
+                </form>
+        </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

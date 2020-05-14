@@ -2,7 +2,6 @@ from django.forms import ModelForm
 from .models import *
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from django import forms
 
 
 class OutletForm(ModelForm):
@@ -20,6 +19,12 @@ class TagForm(ModelForm):
 class ProductForm(ModelForm):
     class Meta:
         model = Product
+        fields = '__all__'
+
+
+class OrderForm(ModelForm):
+    class Meta:
+        model = Order
         fields = '__all__'
 
 

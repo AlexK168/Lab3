@@ -6,6 +6,8 @@ urlpatterns = [
     path('outlets/', include('shop.urls_dir.outlets.urls')),
     path('tags/', include('shop.urls_dir.tags.urls')),
     path('products/', include('shop.urls_dir.products.urls')),
+    path('orders/', include('shop.urls_dir.orders.urls')),
+    path('customers/', include('shop.urls_dir.customers.urls')),
     path('login/', views.sign_in, name='login'),
     path('register/', views.register, name='register'),
     path('logout/', views.sign_out, name='logout'),
